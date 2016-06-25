@@ -83,15 +83,15 @@ class Gen {
     })));
   }
 
-  static from(x) {
+  static of(x) {
     return new Gen(core.gen.return(x));
   }
 
-  static fromOneOf(xs) {
+  static ofOneOf(xs) {
     return new Gen(core.gen.returnOneOf(xs));
   }
 
-  static fromOneOfWeighted(generators) {
+  static ofOneOfWeighted(generators) {
     return new Gen(core.gen.returnOneOfWeighted(generators));
   }
 

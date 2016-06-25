@@ -29,13 +29,13 @@ describe('gen builders', () => {
   });
 
   it('generates an exact value', () => {
-    const vals = Gen.from('wow').sample({times: 100});
+    const vals = Gen.of('wow').sample({times: 100});
     expect(vals.length).toBe(100);
     expect(vals).toAllPass((value) => value === 'wow');
   });
 
   it('generates one of a collection of values', () => {
-    const vals = Gen.fromOneOf(['foo', 'bar', 'baz']).sample({times: 100});
+    const vals = Gen.ofOneOf(['foo', 'bar', 'baz']).sample({times: 100});
     expect(vals.length).toBe(100);
     expect(vals).toAllPass((value) => {
       return value === 'foo' || value === 'bar' || value === 'baz';
@@ -52,7 +52,7 @@ describe('gen builders', () => {
   });
 
   it('generates one of other generators in a weighted fashion', () => {
-    const vals = Gen.fromOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]).sample({times: 10000});
+    const vals = Gen.ofOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]).sample({times: 10000});
     expect(vals.length).toBe(10000);
     expect(vals).toAllPass((value) => {
       const type = typeof value;
