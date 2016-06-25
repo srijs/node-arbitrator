@@ -1,4 +1,4 @@
-(ns testcheck.gen
+(ns arbitrator.gen
   (:require [clojure.test.check.generators :as gen]))
 
 

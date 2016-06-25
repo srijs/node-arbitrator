@@ -1,20 +1,26 @@
 {
-  "name": "testcheck",
-  "version": "0.1.4",
+  "name": "arbitator",
+  "version": "0.2.0-alpha.0",
   "description": "Property testing for JavaScript",
-  "homepage": "https://github.com/leebyron/testcheck-js",
+  "homepage": "https://github.com/srijs/node-arbitator",
   "author": {
-    "name": "Lee Byron",
-    "url": "https://github.com/leebyron"
+    "name": "Sam Rijs",
+    "url": "https://github.com/srijs"
   },
+  "contributors": [
+    {
+      "name": "Lee Byron",
+      "url": "https://github.com/leebyron"
+    }
+  ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/leebyron/testcheck-js"
+    "url": "git://github.com/srijs/node-arbitator"
   },
   "bugs": {
-    "url": "https://github.com/leebyron/testcheck-js/issues"
+    "url": "https://github.com/srijs/node-arbitator/issues"
   },
-  "main": "dist/testcheck.js",
+  "main": "dist/arbitator.js",
   "devDependencies": {
     "jasmine-node": "^1.14.5"
   },
@@ -33,6 +39,7 @@
     "quickcheck",
     "doublecheck",
     "testcheck",
+    "arbitator",
     "generative"
   ],
   "scripts": {
@@ -41,6 +48,6 @@
   },
   "license": "BSD",
   "typescript": {
-    "definition": "dist/testcheck.d.ts"
+    "definition": "dist/arbitator.d.ts"
   }
 }

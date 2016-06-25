@@ -58,7 +58,7 @@ export interface Result {
  * Generator is an opaque type. It has no public methods or properties.
  */
 export interface Generator<T> {
-  __testcheck_generator: 'testcheck';
+  __is_arbitator_generator: 'arbitator';
 }
 
 

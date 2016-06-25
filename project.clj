@@ -1,4 +1,4 @@
-(defproject doublecheck-js "0.0.0"
+(defproject arbitator "0.0.0"
   :description "Property Tests for JavaScript"
 
   :source-paths ["src"]
@@ -16,7 +16,7 @@
       :source-paths ["src"],
       :id "release",
       :compiler {
-        :output-to "dist/testcheck.js",
+        :output-to "dist/arbitator.js",
         :libs [""]
         :optimizations :advanced
         :output-wrapper false

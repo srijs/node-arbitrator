@@ -1,4 +1,4 @@
-(ns testcheck
+(ns arbitator
   (:require [clojure.test.check :as tc]
             [clojure.test.check.random :as rand]
             [clojure.test.check.rose_tree :as rose]

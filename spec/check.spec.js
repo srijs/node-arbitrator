@@ -1,14 +1,14 @@
 describe('check', function () {
 
-  var testcheck = require('../');
-  var gen = testcheck.gen;
+  var arbitator = require('../');
+  var gen = arbitator.gen;
 
   it('checks true properties', function () {
 
     var seedVal = 1234567890;
     var calls = 0;
 
-    var result = testcheck.check(testcheck.property(
+    var result = arbitator.check(arbitator.property(
       [gen.posInt],
       function (intValue) {
         calls++;
@@ -28,7 +28,7 @@ describe('check', function () {
     var seedVal = 1234567890;
     var calls = 0;
 
-    var result = testcheck.check(testcheck.property(
+    var result = arbitator.check(arbitator.property(
       [gen.posInt],
       function (intValue) {
         calls++;
