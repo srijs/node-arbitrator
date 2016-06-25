@@ -161,14 +161,14 @@ export class Gen<T> {
    * shrink. This can be useful when shrinking is taking a long time or is not
    * applicable to the domain.
    */
-  noShrink(): Gen<T>;
+  whichNeverShrinks(): Gen<T>;
 
   /**
    * Given a shrinkable Gen, return a new Gen which will always
    * consider shrinking, even if the property passes (up to one
    * additional level).
    */
-  shrink(): Gen<T>;
+  whichAlwaysShrinks(): Gen<T>;
 
 
   // Simple Gens

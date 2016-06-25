@@ -65,11 +65,11 @@ class Gen {
     return new Gen(core.gen.resized(size, this._coreGen));
   }
 
-  noShrink() {
+  whichNeverShrinks() {
     return new Gen(core.gen.noShrink(this._coreGen));
   }
 
-  shrink() {
+  whichAlwaysShrinks() {
     return new Gen(core.gen.shrink(this._coreGen));
   }
 
