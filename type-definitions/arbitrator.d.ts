@@ -196,7 +196,7 @@ export class Gen<T> {
   /**
    * Creates a Gen which will always generate the provided value.
    *
-   *     var alwaysThree = Gen.from(3)
+   *     var alwaysThree = Gen.of(3)
    *
    */
   static of<T>(value: T): Gen<T>;
@@ -204,16 +204,16 @@ export class Gen<T> {
   /**
    * Creates a Gen which will always generate one of the provided values.
    *
-   *     var alphabetSoup = Gen.fromOneOf(['a', 'b', 'c'])
+   *     var alphabetSoup = Gen.ofOneOf(['a', 'b', 'c'])
    *
    */
   static ofOneOf<T>(values: T[]): Gen<T>;
 
   /**
-   * Similar to `fromOneOf`, except provides probablistic "weights" to
+   * Similar to `ofOneOf`, except provides probablistic "weights" to
    * each generator.
    *
-   *     var fizzBuzz = Gen.fromOneOfWeighted([[1, 'fizz'], [5, 'buzz']])
+   *     var fizzBuzz = Gen.ofOneOfWeighted([[1, 'fizz'], [5, 'buzz']])
    */
   static ofOneOfWeighted<T>(
     generators: Array<[number, T]>[]
