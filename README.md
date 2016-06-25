@@ -47,8 +47,8 @@ npm install testcheck
 Then require it into your testing environment and start testing.
 
 ```javascript
-var testcheck = require('testcheck');
-var gen = testcheck.gen;
+import * as testcheck from 'testcheck';
+import {gen} from 'testcheck';
 
 var result = testcheck.check(
   testcheck.property(
@@ -56,15 +56,6 @@ var result = testcheck.check(
     x => x - x === 0
   )
 );
-```
-
-### Typescript
-
-If you write your tests in Typescript, include the testcheck type definitions.
-
-```javascript
-///<reference path='node_modules/testcheck/dist/testcheck.d.ts'/>
-import testcheck = require('testcheck');
 ```
 
 
