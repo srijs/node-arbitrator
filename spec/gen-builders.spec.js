@@ -2,7 +2,7 @@
 
 describe('gen builders', () => {
   const arbitrator = require('../dist/arbitrator.js');
-  const Generator = arbitrator.Generator;
+  const Gen = arbitrator.Gen;
   const Property = arbitrator.Property;
 
   beforeEach(function () {
@@ -29,13 +29,13 @@ describe('gen builders', () => {
   });
 
   it('generates an exact value', () => {
-    const vals = Generator.from('wow').sample({times: 100});
+    const vals = Gen.from('wow').sample({times: 100});
     expect(vals.length).toBe(100);
     expect(vals).toAllPass((value) => value === 'wow');
   });
 
   it('generates one of a collection of values', () => {
-    const vals = Generator.fromOneOf(['foo', 'bar', 'baz']).sample({times: 100});
+    const vals = Gen.fromOneOf(['foo', 'bar', 'baz']).sample({times: 100});
     expect(vals.length).toBe(100);
     expect(vals).toAllPass((value) => {
       return value === 'foo' || value === 'bar' || value === 'baz';
@@ -43,7 +43,7 @@ describe('gen builders', () => {
   });
 
   it('generates one of other generators', () => {
-    const vals = Generator.oneOf([Generator.int, Generator.boolean]).sample({times: 100});
+    const vals = Gen.oneOf([Gen.int, Gen.boolean]).sample({times: 100});
     expect(vals.length).toBe(100);
     expect(vals).toAllPass((value) => {
       const type = typeof value;
@@ -52,7 +52,7 @@ describe('gen builders', () => {
   });
 
   it('generates one of other generators in a weighted fashion', () => {
-    const vals = Generator.fromOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]).sample({times: 10000});
+    const vals = Gen.fromOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]).sample({times: 10000});
     expect(vals.length).toBe(10000);
     expect(vals).toAllPass((value) => {
       const type = typeof value;
@@ -67,7 +67,7 @@ describe('gen builders', () => {
   });
 
   it('generates one of other generators in a weighted fashion', () => {
-    const vals = Generator.oneOfWeighted([[2, Generator.int], [1, Generator.boolean]]).sample({times: 10000});
+    const vals = Gen.oneOfWeighted([[2, Gen.int], [1, Gen.boolean]]).sample({times: 10000});
     expect(vals.length).toBe(10000);
     expect(vals).toAllPass((value) => {
       const type = typeof value;

@@ -35,10 +35,10 @@ npm install arbitrator
 Then require it into your testing environment and start testing.
 
 ```javascript
-import {Generator, Property} from 'arbitrator';
+import {Gen, Property} from 'arbitrator';
 
 const result =
-  Property.forAll(Generator.int, x => x - x === 0).check();
+  Property.forAll(Gen.int, x => x - x === 0).check();
 ```
 
 
@@ -92,18 +92,18 @@ by describing the types of values for each argument.
 For testing our first property, we need numbers:
 
 ```javascript
-Generator.int
+Gen.int
 ```
 
 For the second, we need arrays of numbers
 
 ```javascript
-Generator.int.array()
+Gen.int.array()
 ```
 
 There are a wide variety of value generators, we've only scratched the surface.
 We can pick amongst a set of values with
-`Generator.fromOneOf`, nested arrays with ints `Generator.int.nested(x => x.array())` and
+`Gen.fromOneOf`, nested arrays with ints `Gen.int.nested(x => x.array())` and
 much more. You can even define your own generators with `#map`, `#chain`
 and `#sized`.
 
@@ -116,7 +116,7 @@ up to 1000 different tests before concluding).
 
 ```javascript
 const result =
-  Property.forAll(Generator.int, (x) => x - x === 0)
+  Property.forAll(Gen.int, (x) => x - x === 0)
     .check({times: 1000});
 ```
 
@@ -135,7 +135,7 @@ Let's try another property: the sum of two integers is the same or larger than
 either of the integers alone.
 
 ```javascript
-Property.forAll2(Generator.int, Generator.int, (a, b) => {
+Property.forAll2(Gen.int, Gen.int, (a, b) => {
   return a + b >= a && a + b >= b;
 }).check();
 ```
@@ -175,7 +175,7 @@ the original failing test did. Now we know that we can either improve our
 property or make the test data more specific:
 
 ```javascript
-Property.forAll2(Generator.posInt, Generator.posInt, (a, b) => {
+Property.forAll2(Gen.posInt, Gen.posInt, (a, b) => {
   return a + b >= a && a + b >= b;
 }).check();
 ```
@@ -202,7 +202,7 @@ Visualizing the data `check` generates may help diagnose the quality of a test.
 Use `sample` to get a look at what a generator produces:
 
 ```javascript
-Generator.int.sample()
+Gen.int.sample()
 // [ 0, 0, 2, -1, 3, 5, -4, 0, 3, 5 ]
 ```
 
@@ -224,8 +224,8 @@ by another string always returns an array of length 1.
 
 ```javascript
 Property.forAll2(
-  Generator.string.notEmpty(),
-  Generator.string.notEmpty(),
+  Gen.string.notEmpty(),
+  Gen.string.notEmpty(),
   (str, separator) => {
     return str.split(separator).length === 1;
   }
@@ -242,9 +242,9 @@ We could change the test to be aware of this relationship such that the
 
 ```javascript
 Property.forAll3(
-  Generator.string.notEmpty(),
-  Generator.posInt,
-  Generator.strictPosInt,
+  Gen.string.notEmpty(),
+  Gen.posInt,
+  Gen.strictPosInt,
   (str, start, length) => {
     var separator = str.substr(start % str.length, length);
     return str.split(separator).length === 1;

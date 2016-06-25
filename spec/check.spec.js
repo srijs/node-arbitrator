@@ -2,14 +2,14 @@
 
 describe('check', () => {
   const arbitrator = require('../dist/arbitrator.js');
-  const Generator = arbitrator.Generator;
+  const Gen = arbitrator.Gen;
   const Property = arbitrator.Property;
 
   it('checks true properties', () => {
     const seedVal = 1234567890;
     let calls = 0;
 
-    const result = Property.forAll(Generator.posInt, (intValue) => {
+    const result = Property.forAll(Gen.posInt, (intValue) => {
       calls++;
       return intValue >= 0;
     }).check({times: 100, seed: seedVal});
@@ -24,7 +24,7 @@ describe('check', () => {
     const seedVal = 1234567890;
     let calls = 0;
 
-    const result = Property.forAll(Generator.posInt, (intValue) => {
+    const result = Property.forAll(Gen.posInt, (intValue) => {
         calls++;
         return intValue >= 0 && intValue < 42;
       }
