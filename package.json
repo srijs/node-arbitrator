@@ -1,6 +1,6 @@
 {
   "name": "arbitrator",
-  "version": "0.2.0-alpha.0",
+  "version": "0.2.0-alpha.1",
   "description": "Property testing for JavaScript",
   "homepage": "https://github.com/srijs/node-arbitrator",
   "author": {
