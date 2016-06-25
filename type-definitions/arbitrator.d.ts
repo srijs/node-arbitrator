@@ -154,7 +154,7 @@ export class Gen<T> {
    * Given an explicit size, and a Gen that relies on size, returns a new
    * Gen which always uses the provided size and is not shrinkable.
    */
-  resized(size: number): Gen<T>;
+  withFixedSize(size: number): Gen<T>;
 
   /**
    * Given a shrinkable Gen, return a new Gen which will never

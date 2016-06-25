@@ -61,7 +61,7 @@ class Gen {
     return new Gen(core.gen.sized(size => sizedGenFn(size)._coreGen));
   }
 
-  resized(size) {
+  withFixedSize(size) {
     return new Gen(core.gen.resized(size, this._coreGen));
   }
 
