@@ -1,8 +1,8 @@
 {
-  "name": "arbitator",
+  "name": "arbitrator",
   "version": "0.2.0-alpha.0",
   "description": "Property testing for JavaScript",
-  "homepage": "https://github.com/srijs/node-arbitator",
+  "homepage": "https://github.com/srijs/node-arbitrator",
   "author": {
     "name": "Sam Rijs",
     "url": "https://github.com/srijs"
@@ -15,12 +15,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/srijs/node-arbitator"
+    "url": "git://github.com/srijs/node-arbitrator"
   },
   "bugs": {
-    "url": "https://github.com/srijs/node-arbitator/issues"
+    "url": "https://github.com/srijs/node-arbitrator/issues"
   },
-  "main": "dist/arbitator.js",
+  "main": "dist/arbitrator.js",
   "devDependencies": {
     "jasmine-node": "^1.14.5"
   },
@@ -39,7 +39,7 @@
     "quickcheck",
     "doublecheck",
     "testcheck",
-    "arbitator",
+    "arbitrator",
     "generative"
   ],
   "scripts": {
@@ -48,6 +48,6 @@
   },
   "license": "BSD",
   "typescript": {
-    "definition": "dist/arbitator.d.ts"
+    "definition": "dist/arbitrator.d.ts"
   }
 }

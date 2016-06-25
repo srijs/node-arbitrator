@@ -1,12 +1,12 @@
-# Contributing to Arbitator
+# Contributing to Arbitrator
 
 We want to make contributing to this project as easy and transparent as
 possible. Hopefully this document makes the process for contributing clear and
-answers any questions you may have. If not, feel free to open an [Issue](https://github.com/srijs/arbitator/issues).
+answers any questions you may have. If not, feel free to open an [Issue](https://github.com/srijs/arbitrator/issues).
 
 ## Pull Requests
 
-All active development of Arbitator happens on GitHub. We actively welcome
+All active development of Arbitrator happens on GitHub. We actively welcome
 your [pull requests](https://help.github.com/articles/creating-a-pull-request).
 
  1. Fork the repo and create your branch from `master`.
@@ -21,7 +21,7 @@ times. But in order to move fast, we might make API changes that your
 application might not be compatible with. We will do our best to communicate
 these changes and always [version](http://semver.org/) appropriately so you can
 lock into a specific version if need be. If any of this is worrysome to you,
-just use [npm](https://www.npmjs.org/package/arbitator).
+just use [npm](https://www.npmjs.org/package/arbitrator).
 
 ## Issues
 
@@ -31,5 +31,5 @@ issue. The best way is to provide a reduced test case on jsFiddle or jsBin.
 
 ## License
 
-By contributing to Arbitator, you agree that your contributions will be
+By contributing to Arbitrator, you agree that your contributions will be
 licensed under its BSD license.

@@ -1,4 +1,4 @@
-(defproject arbitator "0.0.0"
+(defproject arbitrator "0.0.0"
   :description "Property Tests for JavaScript"
 
   :source-paths ["src"]
@@ -16,7 +16,7 @@
       :source-paths ["src"],
       :id "release",
       :compiler {
-        :output-to "dist/arbitator.js",
+        :output-to "dist/core.js",
         :libs [""]
         :optimizations :advanced
         :output-wrapper false

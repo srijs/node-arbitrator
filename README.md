@@ -1,9 +1,9 @@
-Arbitator
+Arbitrator
 =========
 
 Generative property testing for JavaScript.
 
-`arbitator` is a library for generative testing of program properties,
+`arbitrator` is a library for generative testing of program properties,
 ala QuickCheck.
 
 By providing a specification of the JavaScript program in the form of
@@ -14,43 +14,38 @@ test case is found.
 
 ### Atop the shoulders of giants
 
-`arbitator` is based on Clojure's [test.check](https://github.com/clojure/test.check)
+`arbitrator` is based on Clojure's [test.check](https://github.com/clojure/test.check)
 which is inspired by Haskell's [QuickCheck](https://hackage.haskell.org/package/QuickCheck).
 Many gracious thanks goes to all of the
 brilliance and hard work enabling this project to exist.
 
-Note: `arbitator` is a fork of [`testcheck-js`](https://github.com/leebyron/testcheck-js).
+Note: `arbitrator` is a fork of [`testcheck-js`](https://github.com/leebyron/testcheck-js).
 All credit goes to Lee Byron for getting this thing off the ground.
 
 
 Getting started
 ---------------
 
-Install `arbitator` using npm
+Install `arbitrator` using npm
 
 ```shell
-npm install arbitator
+npm install arbitrator
 ```
 
 Then require it into your testing environment and start testing.
 
 ```javascript
-import * as arbitator from 'arbitator';
-import {gen} from 'arbitator';
+import {Generator, Property} from 'arbitrator';
 
-var result = arbitator.check(
-  arbitator.property(
-    [gen.int],
-    x => x - x === 0
-  )
-);
+const result =
+  Property.forAll(Generator.int, x => x - x === 0).check();
 ```
 
 
 API
 ---
 
-All API documentation is contained within the type definition file, [arbitator.d.ts](./type-definitions/arbitator.d.ts).
+All API documentation is contained within the type definition file, [arbitrator.d.ts](./type-definitions/arbitrator.d.ts).
 
 
 Defining properties
@@ -85,7 +80,7 @@ the provided arguments to determine its return value (no other reading
 or writing!).
 
 If you can start to describe your program in terms of its properties, then
-`arbitator` can test them for you.
+`arbitrator` can test them for you.
 
 
 Generating test cases
@@ -97,20 +92,20 @@ by describing the types of values for each argument.
 For testing our first property, we need numbers:
 
 ```javascript
-gen.int
+Generator.int
 ```
 
 For the second, we need arrays of numbers
 
 ```javascript
-gen.array(gen.int)
+Generator.int.array()
 ```
 
 There are a wide variety of value generators, we've only scratched the surface.
-We can generate random JSON with `gen.JSON`, pick amongst a set of values with
-`gen.returnOneOf`, nested arrays with ints `gen.nested(gen.array, gen.int)` and
-much more. You can even define your own generators with `gen.map`, `gen.bind`
-and `gen.sized`.
+We can pick amongst a set of values with
+`Generator.fromOneOf`, nested arrays with ints `Generator.int.nested(x => x.array())` and
+much more. You can even define your own generators with `#map`, `#chain`
+and `#sized`.
 
 
 Checking the properties
@@ -120,15 +115,9 @@ Finally, we check our properties using our test case generator (in this case,
 up to 1000 different tests before concluding).
 
 ```javascript
-var result = arbitator.check(
-  arbitator.property(
-    [gen.int],    // the arguments generator
-    function (x) {  // the property function to test
-      return x - x === 0;
-    }
-  ),
-  { times: 1000 }
-);
+const result =
+  Property.forAll(Generator.int, (x) => x - x === 0)
+    .check({times: 1000});
 ```
 
 `check` runs through random cases looking for failure, and when it doesn't find
@@ -146,12 +135,9 @@ Let's try another property: the sum of two integers is the same or larger than
 either of the integers alone.
 
 ```javascript
-arbitator.check(arbitator.property(
-  [gen.int, gen.int],
-  function (a, b) {
-    return a + b >= a && a + b >= b;
-  }
-));
+Property.forAll2(Generator.int, Generator.int, (a, b) => {
+  return a + b >= a && a + b >= b;
+}).check();
 ```
 
 `check` runs through random cases again. This time it found a failing case, so
@@ -189,12 +175,9 @@ the original failing test did. Now we know that we can either improve our
 property or make the test data more specific:
 
 ```javascript
-arbitator.check(arbitator.property(
-  [gen.posInt, gen.posInt],
-  function (a, b) {
-    return a + b >= a && a + b >= b;
-  }
-));
+Property.forAll2(Generator.posInt, Generator.posInt, (a, b) => {
+  return a + b >= a && a + b >= b;
+}).check();
 ```
 
 With our correction, our property passes all tests.
@@ -204,7 +187,7 @@ Thinking in random distributions
 --------------------------------
 
 It's important to remember that your test is only as good as the data being
-provided. While `arbitator` provides tools to generate random data, thinking
+provided. While `arbitrator` provides tools to generate random data, thinking
 about what that data looks like may help you write better tests. Also, because
 the data generated is random, a test may pass which simply failed to uncover
 a corner case.
@@ -219,7 +202,7 @@ Visualizing the data `check` generates may help diagnose the quality of a test.
 Use `sample` to get a look at what a generator produces:
 
 ```javascript
-arbitator.sample(gen.int)
+Generator.int.sample()
 // [ 0, 0, 2, -1, 3, 5, -4, 0, 3, 5 ]
 ```
 
@@ -227,7 +210,7 @@ arbitator.sample(gen.int)
 
 Test data generators have an implicit `size` property, which could be used to
 determine the maximum value for a generated integer or the max length of a
-generated array. `arbitator` begins by generating small test cases and gradually
+generated array. `arbitrator` begins by generating small test cases and gradually
 increases the size.
 
 So if you wish to test very large numbers or extremely long arrays, running
@@ -240,12 +223,13 @@ Let's test an assumption that should clearly be wrong: a string [split](https://
 by another string always returns an array of length 1.
 
 ```javascript
-arbitator.check(arbitator.property(
-  [gen.notEmpty(gen.string), gen.notEmpty(gen.string)],
-  function (str, separator) {
+Property.forAll2(
+  Generator.string.notEmpty(),
+  Generator.string.notEmpty(),
+  (str, separator) => {
     return str.split(separator).length === 1;
   }
-));
+).check();
 ```
 
 Unless you got lucky, you probably saw this check pass. This is because we're
@@ -257,13 +241,15 @@ We could change the test to be aware of this relationship such that the
 `separator` is always contained within the `str`.
 
 ```javascript
-arbitator.check(arbitator.property(
-  [gen.notEmpty(gen.string), gen.posInt, gen.strictPosInt],
-  function (str, start, length) {
+Property.forAll3(
+  Generator.string.notEmpty(),
+  Generator.posInt,
+  Generator.strictPosInt,
+  (str, start, length) => {
     var separator = str.substr(start % str.length, length);
     return str.split(separator).length === 1;
   }
-));
+).check();
 ```
 
 Now `separator` is a random substring of `str` and the test fails with the
@@ -273,6 +259,6 @@ smallest failing arguments: `'0', 0, 1`.
 Contribution
 ------------
 
-Use [Github issues](https://github.com/srijs/arbitator/issues) for requests.
+Use [Github issues](https://github.com/srijs/arbitrator/issues) for requests.
 
 Pull requests actively welcomed. Learn how to [contribute](./CONTRIBUTING.md).

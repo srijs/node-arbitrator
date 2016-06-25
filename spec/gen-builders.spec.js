@@ -1,80 +1,80 @@
-describe('gen builders', function () {
+'use strict';
 
-  var arbitator = require('../');
-  var gen = arbitator.gen;
+describe('gen builders', () => {
+  const arbitrator = require('../dist/arbitrator.js');
+  const Generator = arbitrator.Generator;
+  const Property = arbitrator.Property;
 
   beforeEach(function () {
     this.addMatchers({
-      toAllPass: function(predicate) {
-        var failedValue;
-        var pass = this.actual.every(function (value) {
+      toAllPass(predicate) {
+        let failedValue;
+        const pass = this.actual.every((value) => {
           if (predicate(value)) {
             return true;
           } else {
             failedValue = value;
           }
         });
-        this.message = function() {
+        this.message = () => {
           return 'Expected ' + JSON.stringify(failedValue) + ' to pass ' + predicate;
         };
         return pass;
       },
-      toBeApprx: function(value, epsilon) {
+      toBeApprx(value, epsilon) {
         epsilon = epsilon || 0.333;
         return Math.abs(this.actual - value) < epsilon;
       }
     })
   });
 
-  it('generates an exact value', function () {
-    var vals = arbitator.sample(gen.return('wow'), {times:100});
+  it('generates an exact value', () => {
+    const vals = Generator.from('wow').sample({times: 100});
     expect(vals.length).toBe(100);
-    expect(vals).toAllPass(function (value) {
-      return value === 'wow';
-    });
+    expect(vals).toAllPass((value) => value === 'wow');
   });
 
-  it('generates one of a collection of values', function () {
-    var vals = arbitator.sample(gen.returnOneOf(['foo', 'bar', 'baz']), {times:100});
+  it('generates one of a collection of values', () => {
+    const vals = Generator.fromOneOf(['foo', 'bar', 'baz']).sample({times: 100});
     expect(vals.length).toBe(100);
-    expect(vals).toAllPass(function (value) {
+    expect(vals).toAllPass((value) => {
       return value === 'foo' || value === 'bar' || value === 'baz';
     });
   });
 
-  it('generates one of other generators', function () {
-    var vals = arbitator.sample(gen.oneOf([gen.int, gen.boolean]), {times:100});
+  it('generates one of other generators', () => {
+    const vals = Generator.oneOf([Generator.int, Generator.boolean]).sample({times: 100});
     expect(vals.length).toBe(100);
-    expect(vals).toAllPass(function (value) {
-      var type = typeof value;
+    expect(vals).toAllPass((value) => {
+      const type = typeof value;
       return type === 'number' || type === 'boolean';
     });
   });
 
-  it('generates one of other generators in a weighted fashion', function () {
-    var vals = arbitator.sample(gen.returnOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]), {times:10000});
+  it('generates one of other generators in a weighted fashion', () => {
+    const vals = Generator.fromOneOfWeighted([[2, 'foo'], [1, 'bar'], [6, 'baz']]).sample({times: 10000});
     expect(vals.length).toBe(10000);
-    expect(vals).toAllPass(function (value) {
-      var type = typeof value;
+    expect(vals).toAllPass((value) => {
+      const type = typeof value;
       return value === 'foo' || value === 'bar' || value === 'baz';
     });
-    var fooCount = vals.reduce(function (count, val) { return count + (val === 'foo'); }, 0);
-    var barCount = vals.reduce(function (count, val) { return count + (val === 'bar'); }, 0);
-    var bazCount = vals.reduce(function (count, val) { return count + (val === 'baz'); }, 0);
+    const fooCount = vals.reduce((count, val) => count + (val === 'foo'), 0);
+    const barCount = vals.reduce((count, val) => count + (val === 'bar'), 0);
+    const bazCount = vals.reduce((count, val) => count + (val === 'baz'), 0);
     expect(fooCount / barCount).toBeApprx(2);
     expect(bazCount / barCount).toBeApprx(6);
     expect(bazCount / fooCount).toBeApprx(3);
   });
 
-  it('generates one of other generators in a weighted fashion', function () {
-    var vals = arbitator.sample(gen.oneOfWeighted([[2, gen.int], [1, gen.boolean]]), {times:10000});
+  it('generates one of other generators in a weighted fashion', () => {
+    const vals = Generator.oneOfWeighted([[2, Generator.int], [1, Generator.boolean]]).sample({times: 10000});
     expect(vals.length).toBe(10000);
-    expect(vals).toAllPass(function (value) {
-      var type = typeof value;
+    expect(vals).toAllPass((value) => {
+      const type = typeof value;
       return type === 'number' || type === 'boolean';
     });
-    var intCount = vals.reduce(function (count, val) { return count + (typeof val === 'number'); }, 0);
-    var boolCount = vals.reduce(function (count, val) { return count + (typeof val === 'boolean'); }, 0);
+    const intCount = vals.reduce((count, val) => count + (typeof val === 'number'), 0);
+    const boolCount = vals.reduce((count, val) => count + (typeof val === 'boolean'), 0);
     expect(intCount / boolCount).toBeApprx(2);
   });
 

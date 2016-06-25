@@ -1,40 +1,34 @@
-describe('check', function () {
+'use strict';
 
-  var arbitator = require('../');
-  var gen = arbitator.gen;
+describe('check', () => {
+  const arbitrator = require('../dist/arbitrator.js');
+  const Generator = arbitrator.Generator;
+  const Property = arbitrator.Property;
 
-  it('checks true properties', function () {
+  it('checks true properties', () => {
+    const seedVal = 1234567890;
+    let calls = 0;
 
-    var seedVal = 1234567890;
-    var calls = 0;
-
-    var result = arbitator.check(arbitator.property(
-      [gen.posInt],
-      function (intValue) {
-        calls++;
-        return intValue >= 0;
-      }
-    ), { times: 100, seed: seedVal });
+    const result = Property.forAll(Generator.posInt, (intValue) => {
+      calls++;
+      return intValue >= 0;
+    }).check({times: 100, seed: seedVal});
 
     expect(calls).toBe(100);
     expect(result.result).toBe(true);
     expect(result['num-tests']).toBe(100);
     expect(result.seed).toBe(seedVal);
-
   });
 
-  it('checks false properties', function () {
+  it('checks false properties', () => {
+    const seedVal = 1234567890;
+    let calls = 0;
 
-    var seedVal = 1234567890;
-    var calls = 0;
-
-    var result = arbitator.check(arbitator.property(
-      [gen.posInt],
-      function (intValue) {
+    const result = Property.forAll(Generator.posInt, (intValue) => {
         calls++;
         return intValue >= 0 && intValue < 42;
       }
-    ), { times: 100, seed: seedVal });
+    ).check({times: 100, seed: seedVal});
 
     expect(calls).toBeLessThan(100);
     expect(calls).toBe(result['num-tests'] + result.shrunk['total-nodes-visited']);
@@ -43,7 +37,6 @@ describe('check', function () {
     expect(result.fail.length).toBe(1);
     expect(result.shrunk).toEqual(jasmine.any(Object));
     expect(result.shrunk.smallest).toEqual([42]);
-
   });
 
 });
