@@ -2,7 +2,6 @@
  * Optional arguments to `check` and `sample`.
  */
 export interface Options {
-
   // Number of times to run `check` or `sample`.
   times?: number;
 
@@ -79,7 +78,7 @@ export class Gen<T> {
    * Handy tool for checking the output of your generators. Given a generator,
    * it returns an array of the results of the generator.
    *
-   *     var results = sample(gen.int, { seed: 123 });
+   *     var results = Gen.int.sample({seed: 123});
    *     // [ 0, 1, 1, 2, 3, 3, -6, 1, -3, -8 ]
    *
    * If no options are provided, they default to:
