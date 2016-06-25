@@ -192,16 +192,6 @@ describe('value generator', function () {
     });
   });
 
-  it('generates objects from a specific definition', function () {
-    var vals = testcheck.sample(gen.object({t: gen.return(true), f: gen.return(false)}), {times:100});
-    expect(vals.length).toBe(100);
-    expect(vals).toAllPass(function (value) {
-      var keys = Object.keys(value);
-      return value.constructor === Object &&
-        keys.length === 2 && value.t === true && value.f === false;
-    });
-  });
-
   it('generates nested collections', function () {
     var vals = testcheck.sample(gen.nested(gen.array, gen.int), {times:20});
     expect(vals.length).toBe(20);

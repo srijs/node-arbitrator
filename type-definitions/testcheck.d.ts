@@ -59,7 +59,9 @@ declare module 'testcheck' {
    *
    * Generator is an opaque type. It has no public methods or properties.
    */
-  export interface Generator<T> {}
+  export interface Generator<T> {
+    __testcheck_generator: 'testcheck';
+  }
 
 
   /**
@@ -214,7 +216,7 @@ declare module 'testcheck' {
      *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
      */
     oneOfWeighted: <T>(
-      generators: Array</*number, Generator<T>*/any>[]
+      generators: Array<[number, Generator<T>]>[]
     ) => Generator<T>;
 
     /**
@@ -240,7 +242,7 @@ declare module 'testcheck' {
      *     var fizzBuzz = gen.oneOf([[1, 'fizz'], [5, 'buzz']])
      */
     returnOneOfWeighted: <T>(
-      generators: Array</*number, T*/any>[]
+      generators: Array<[number, T]>[]
     ) => Generator<T>;
 
 
@@ -288,16 +290,10 @@ declare module 'testcheck' {
      *
      *     gen.object(gen.int, gen.int)
      *
-     *  - Generate Objects with specific keys with different kinds of values at
-     *    each key (e.g. records). (ex. a 2d point like `{ x: 3, y: 5 }`)
-     *
-     *     gen.object({ x: gen.posInt, y: gen.posInt })
-     *
      */
     object: {
       <T>(valueGen: Generator<T>): Generator<{[key: string]: T}>;
       <T>(keyGen: Generator<string>, valueGen: Generator<T>): Generator<{[key: string]: T}>;
-      (genMap: {[key: string]: Generator<any>}): Generator<{[key: string]: any}>;
     }
 
     /**

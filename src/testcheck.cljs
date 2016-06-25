@@ -1,5 +1,7 @@
 (ns testcheck
   (:require [clojure.test.check :as tc]
+            [clojure.test.check.random :as rand]
+            [clojure.test.check.rose_tree :as rose]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]))
 
@@ -23,9 +25,10 @@
         num-samples (or (aget opt "times") 10)
         max-size (or (aget opt "maxSize") 200)
         seed (aget opt "seed")
-        r (if seed (gen/random seed) (gen/random))]
+        r (if seed (rand/make-random seed) (rand/make-random))]
     (to-array
       (take num-samples
         (map
-          (comp gen/rose-root (partial gen/call-gen generator r))
+          #(rose/root (gen/call-gen generator %1 %2))
+          (gen/lazy-random-states r)
           (gen/make-size-range-seq max-size))))))

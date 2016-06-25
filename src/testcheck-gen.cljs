@@ -72,15 +72,8 @@
 (defn ^{:export gen.object} genObject
   ([key-gen val-gen]
     (gen/fmap clj->js (gen-obj key-gen val-gen)))
-  ([val-gen-or-obj]
-    (if (= js/Object (.-constructor val-gen-or-obj))
-      (let [seq (js->clj val-gen-or-obj)
-        ks (keys seq)
-        vs (vals seq)]
-        (gen/fmap clj->js
-          (gen/fmap (partial zipmap ks)
-                    (apply gen/tuple vs))))
-      (gen-obj (gen/resize 16 gen/string-alpha-numeric) val-gen-or-obj))))
+  ([val-gen]
+    (gen-obj (gen/resize 16 gen/string-alpha-numeric) val-gen)))
 
 (defn ^{:export gen.arrayOrObject} genArrayOrObject
   [val-gen]

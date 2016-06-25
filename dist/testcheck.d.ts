@@ -59,7 +59,9 @@ declare module 'testcheck' {
    *
    * Generator is an opaque type. It has no public methods or properties.
    */
-  export interface Generator<T> {}
+  export interface Generator<T> {
+    __testcheck_generator: 'testcheck';
+  }
 
 
   /**
@@ -199,22 +201,6 @@ declare module 'testcheck' {
     // -----------------
 
     /**
-     * Creates a Generator which will always generate the provided value.
-     *
-     *     var alwaysThree = gen.return(3);
-     *
-     */
-    return: <T>(value: T) => Generator<T>;
-
-    /**
-     * Creates a Generator which will always generate one of the provided values.
-     *
-     *     var alphabetSoup = gen.returnOneOf(['a', 'b', 'c']);
-     *
-     */
-    returnOneOf: <T>(values: T[]) => Generator<T>;
-
-    /**
      * Creates a Generator which will generate values from one of the
      * provided generators.
      *
@@ -230,22 +216,34 @@ declare module 'testcheck' {
      *     var numOrRarelyBool = gen.oneOf([[99, gen.int], [1, gen.boolean]])
      */
     oneOfWeighted: <T>(
-      generators: Array</*number, Generator<T>*/any>[]
+      generators: Array<[number, Generator<T>]>[]
     ) => Generator<T>;
 
     /**
-     * Given a function which takes a generator and returns a generator (such as
-     * `gen.array` or `gen.object`), and a Generator to use as values, creates
-     * potentially nested values.
+     * Creates a Generator which will always generate the provided value.
      *
-     *     gen.nested(gen.array, gen.int)
-     *     // [ [ 0, [ -2 ], 1, [] ]
+     *     var alwaysThree = gen.return(3)
      *
      */
-    nested: <C, T>(
-      collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
-      valueGen: Generator<T>
-    ) => Generator<C>;
+    return: <T>(value: T) => Generator<T>;
+
+    /**
+     * Creates a Generator which will always generate one of the provided values.
+     *
+     *     var alphabetSoup = gen.returnOneOf(['a', 'b', 'c'])
+     *
+     */
+    returnOneOf: <T>(values: T[]) => Generator<T>;
+
+    /**
+     * Similar to `oneOf`, except provides probablistic "weights" to
+     * each generator.
+     *
+     *     var fizzBuzz = gen.oneOf([[1, 'fizz'], [5, 'buzz']])
+     */
+    returnOneOfWeighted: <T>(
+      generators: Array<[number, T]>[]
+    ) => Generator<T>;
 
 
     // Collections: Arrays and Objects
@@ -292,16 +290,10 @@ declare module 'testcheck' {
      *
      *     gen.object(gen.int, gen.int)
      *
-     *  - Generate Objects with specific keys with different kinds of values at
-     *    each key (e.g. records). (ex. a 2d point like `{ x: 3, y: 5 }`)
-     *
-     *     gen.object({ x: gen.posInt, y: gen.posInt })
-     *
      */
     object: {
       <T>(valueGen: Generator<T>): Generator<{[key: string]: T}>;
       <T>(keyGen: Generator<string>, valueGen: Generator<T>): Generator<{[key: string]: T}>;
-      (genMap: {[key: string]: Generator<any>}): Generator<{[key: string]: any}>;
     }
 
     /**
@@ -310,6 +302,20 @@ declare module 'testcheck' {
     arrayOrObject: <T>(
       valueGen: Generator<T>
     ) => Generator<{[key: string]: T; [key: number]: T}>;
+
+    /**
+     * Given a function which takes a generator and returns a generator (such as
+     * `gen.array` or `gen.object`), and a Generator to use as values, creates
+     * potentially nested values.
+     *
+     *     gen.nested(gen.array, gen.int)
+     *     // [ [ 0, [ -2 ], 1, [] ]
+     *
+     */
+    nested: <C, T>(
+      collectionGenFn: (valueGen: Generator<T>) => Generator<C>,
+      valueGen: Generator<T>
+    ) => Generator<C>;
 
 
     // JS Primitives
