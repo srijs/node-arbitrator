@@ -1,9 +1,8 @@
-import {Chance} from 'chance';
-
 import {Tree} from './tree';
+import {RandomState} from './random';
 
 export interface IGen<A> {
-  runGen(chance: Chance.Chance, size: number): A;
+  runGen(rng: RandomState, size: number): A;
 }
 
 export class Gen<A> {
@@ -57,7 +56,7 @@ export class Gen<A> {
    * if you want another size then you should explicitly use #resize.
    */
   generate(): A {
-    return this._.runGen(new Chance(), 30);
+    return this._.runGen(new RandomState(), 30);
   }
 
   private static _traverseForest<A, B>(f: (a: A) => Gen<B>, forest: () => IterableIterator<Tree<A>>): Gen<() => IterableIterator<Tree<B>>> {

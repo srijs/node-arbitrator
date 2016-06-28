@@ -47,8 +47,8 @@ export class RandomState {
   private y = new Uint32Array(N);
   private index = N+1;
 
-  constructor(seed: number) {
-    this._seed(seed);
+  constructor(seed?: number) {
+    this._seed(seed || 5489);
   }
 
   private _seed(seed: number) {
