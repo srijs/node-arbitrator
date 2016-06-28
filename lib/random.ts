@@ -78,6 +78,11 @@ export class RandomState {
     this.y[N-1] = this.y[M-1] ^ (h >>> 1) ^ A[h & 0x1];
   }
 
+  split(): RandomState {
+    const nextSeed = this.random().asInt;
+    return new RandomState(nextSeed);
+  }
+
   random(): RandomOutput {
     if (this.index >= N) {
       this._reseed();
