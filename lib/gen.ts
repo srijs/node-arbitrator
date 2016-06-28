@@ -14,13 +14,15 @@ export class Gen<A> {
 
   map<B>(f: (a: A) => B): Gen<B> {
     return new Gen({
-      runGen: (chance, size) => f(this._.runGen(chance, size))
+      runGen: (rng, size) => f(this._.runGen(rng, size))
     });
   }
 
   chain<B>(f: (a: A) => Gen<B>): Gen<B> {
     return new Gen({
-      runGen: (chance, size) => f(this._.runGen(chance, size))._.runGen(chance, size)
+      runGen: (rng, size) => {
+        return f(this._.runGen(rng, size))._.runGen(rng, size);
+      }
     });
   }
 
@@ -29,7 +31,7 @@ export class Gen<A> {
    */
   static sized<A>(f: (size: number) => Gen<A>): Gen<A> {
     return new Gen({
-      runGen: (chance, size) => f(size)._.runGen(chance, size)
+      runGen: (rng, size) => f(size)._.runGen(rng, size)
     });
   }
 
@@ -39,7 +41,7 @@ export class Gen<A> {
    */
   resize(size: number): Gen<A> {
     return new Gen({
-      runGen: (chance) => this._.runGen(chance, size)
+      runGen: (rng) => this._.runGen(rng, size)
     });
   }
 
@@ -61,10 +63,11 @@ export class Gen<A> {
 
   private static _traverseForest<A, B>(f: (a: A) => Gen<B>, forest: () => IterableIterator<Tree<A>>): Gen<() => IterableIterator<Tree<B>>> {
     return new Gen({
-      runGen: (chance, size) => {
+      runGen: (rng, size) => {
+        const splitRng = rng.split();
         return function*() {
           for (let tree of forest()) {
-            yield Gen.traverseTree(f, tree)._.runGen(chance, size);
+            yield Gen.traverseTree(f, tree)._.runGen(splitRng, size);
           }
         };
       }
