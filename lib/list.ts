@@ -1,4 +1,4 @@
-export class List<T> {
+export class List<T> implements Iterable<T> {
   constructor(private _run: () => IterableIterator<T>) {}
 
   static empty<T>(): List<T> {
