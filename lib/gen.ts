@@ -1,27 +1,32 @@
+import {Random} from 'lcg';
+
 import {Tree} from './tree';
-import {RandomState} from './random';
 
 export interface IGen<A> {
-  runGen(rng: RandomState, size: number): A;
+  runGen(rng: Random, size: number): {rng: Random, val: A};
 }
 
 export class Gen<A> {
   constructor(private _: IGen<A>) {}
 
-  static of<A>(a: A): Gen<A> {
-    return new Gen({runGen: () => a});
+  static of<A>(val: A): Gen<A> {
+    return new Gen({runGen: rng => ({rng, val})});
   }
 
   map<B>(f: (a: A) => B): Gen<B> {
     return new Gen({
-      runGen: (rng, size) => f(this._.runGen(rng, size))
+      runGen: (rng, size) => {
+        let res = this._.runGen(rng, size);
+        return {rng: res.rng, val: f(res.val)};
+      }
     });
   }
 
   chain<B>(f: (a: A) => Gen<B>): Gen<B> {
     return new Gen({
       runGen: (rng, size) => {
-        return f(this._.runGen(rng, size))._.runGen(rng, size);
+        let res = this._.runGen(rng, size);
+        return f(res.val)._.runGen(res.rng, size);
       }
     });
   }
@@ -58,16 +63,22 @@ export class Gen<A> {
    * if you want another size then you should explicitly use #resize.
    */
   generate(): A {
-    return this._.runGen(new RandomState(), 30);
+    return this._.runGen(new Random(5489), 30).val;
   }
 
   private static _traverseForest<A, B>(f: (a: A) => Gen<B>, forest: () => IterableIterator<Tree<A>>): Gen<() => IterableIterator<Tree<B>>> {
     return new Gen({
       runGen: (rng, size) => {
-        const splitRng = rng.split();
-        return function*() {
-          for (let tree of forest()) {
-            yield Gen.traverseTree(f, tree)._.runGen(splitRng, size);
+        const split = rng.split();
+        return {
+          rng: split[1],
+          val: function*() {
+            let subrng = split[2];
+            for (let tree of forest()) {
+              const res = Gen.traverseTree(f, tree)._.runGen(subrng, size);
+              subrng = res.rng;
+              yield res.val;
+            }
           }
         };
       }
