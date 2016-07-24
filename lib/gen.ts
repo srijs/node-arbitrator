@@ -1,5 +1,6 @@
 import {Random} from 'lcg';
 
+import {List} from './list';
 import {Tree} from './tree';
 
 export interface IGen<A> {
@@ -66,20 +67,20 @@ export class Gen<A> {
     return this._.runGen(new Random(5489), 30).val;
   }
 
-  private static _traverseForest<A, B>(f: (a: A) => Gen<B>, forest: () => IterableIterator<Tree<A>>): Gen<() => IterableIterator<Tree<B>>> {
+  private static _traverseForest<A, B>(f: (a: A) => Gen<B>, forest: List<Tree<A>>): Gen<List<Tree<B>>> {
     return new Gen({
       runGen: (rng, size) => {
         const split = rng.split();
         return {
           rng: split[1],
-          val: function*() {
+          val: new List(function*() {
             let subrng = split[2];
-            for (let tree of forest()) {
+            for (let tree of forest) {
               const res = Gen.traverseTree(f, tree)._.runGen(subrng, size);
               subrng = res.rng;
               yield res.val;
             }
-          }
+          })
         };
       }
     });
@@ -87,10 +88,10 @@ export class Gen<A> {
 
   static traverseTree<A, B>(f: (a: A) => Gen<B>, tree: Tree<A>): Gen<Tree<B>> {
     return f(tree.outcome).chain(b => {
-      return Gen._traverseForest(f, () => tree.shrink()).map(shrink => {
+      return Gen._traverseForest(f, tree.shrinks).map(shrinks => {
         return new Tree({
           outcome: b,
-          shrink: shrink
+          shrinks: shrinks
         });
       });
     });

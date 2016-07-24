@@ -1,3 +1,4 @@
+import {List} from './list';
 import {Tree} from './tree';
 import {Gen} from './gen';
 
@@ -28,7 +29,7 @@ export class Arbitrary<A> {
     });
   }
 
-  static fromGenWithShrink<A>(gen: Gen<A>, shrink: (a: A) => IterableIterator<A>): Arbitrary<A> {
+  static fromGenWithShrink<A>(gen: Gen<A>, shrink: (a: A) => List<A>): Arbitrary<A> {
     return new Arbitrary({
       generator: gen.map(a => Tree.unfoldTree(x => x, shrink, a))
     });
