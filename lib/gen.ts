@@ -60,6 +60,77 @@ export class Gen<A> {
   }
 
   /**
+   * Create a random generator which chooses uniformly distributed
+   * integers from the closed interval `[a, b]`.
+   */
+  static chooseInt(min: number, max: number): Gen<number> {
+    return new Gen({
+      runGen: (rng, size) => ({rng: rng.next(), val: rng.getIntegerBetween(min, max)})
+    });
+  }
+
+  /**
+   * Create a random generator which generates an array of random values of a specified size.
+   */
+  asArrayWithLength(len: number): Gen<Array<A>> {
+    return new Gen<Array<A>>({
+      runGen: (rng, size) => {
+        const arr = new Array<A>();
+        while (arr.length < len) {
+          const res = this._.runGen(rng, size);
+          arr.push(res.val);
+          rng = res.rng;
+        }
+        return {rng, val: arr};
+      }
+    });
+  }
+
+  /**
+   * Create a random generator which generates an array of random values.
+   */
+  asArray(): Gen<Array<A>> {
+    return Gen.sized(n => Gen.chooseInt(0, n).chain(len => this.asArrayWithLength(len)));
+  }
+
+  /**
+   * Create a random generator which selects and executes a random generator from
+   * a non-empty collection of random generators with uniform probability.
+   */
+  static oneOf<A>(choice: Gen<A>, choices: Array<Gen<A>>): Gen<A> {
+    return Gen.chooseInt(0, choices.length).chain(idx => {
+      if (idx < 1) {
+        return choice;
+      } else {
+        return choices[idx - 1];
+      }
+    });
+  }
+
+  /**
+   * Create a random generator which selects a value from a non-empty collection with
+   * uniform probability.
+   */
+  static elements<A>(choice: A, choices: Array<A>): Gen<A> {
+    return Gen.chooseInt(0, choices.length).map(idx => {
+      if (idx < 1) {
+        return choice;
+      } else {
+        return choices[idx - 1];
+      }
+    });
+  }
+
+  /**
+   * A random generator which approximates a uniform random variable on `[0, 1]`.
+   */
+  static uniform(): Gen<number> {
+    return new Gen({
+      runGen: (rng) => ({rng: rng.next(), val: rng.get()})
+    });
+  }
+
+  /**
    * Run a generator. The size passed to the generator is always 30;
    * if you want another size then you should explicitly use #resize.
    */
