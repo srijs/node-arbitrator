@@ -6,15 +6,14 @@ import {Tree} from './tree';
 /**
  * Shrink an integral by edging towards a destination number.
  */
-export function shrinkTowards(
-  destination: number,
-  x: number
-): List<number> {
-  if (destination === x) {
-    return List.empty<number>();
-  }
-  const diff = Math.trunc(x / 2) - Math.trunc(destination / 2);
-  return consNub(destination, halves(diff).map(k => x - k));
+export function shrinkTowards(destination: number): (x: number) => List<number> {
+  return function (x) {
+    if (destination === x) {
+      return List.empty<number>();
+    }
+    const diff = Math.trunc(x / 2) - Math.trunc(destination / 2);
+    return consNub(destination, halves(diff).map(k => x - k));
+  };
 }
 
 function consNub<A>(
