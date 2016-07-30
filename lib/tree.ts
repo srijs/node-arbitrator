@@ -1,4 +1,5 @@
 import {List} from './list';
+import {Gen} from './gen';
 
 /**
  * A rose tree which represents a random generated outcome, and all the ways
@@ -135,6 +136,17 @@ export class Tree<A> implements ITree<A> {
     return new Tree({
       outcome: tree.outcome,
       shrinks: tree.shrinks.filter(t => f(t.outcome))
+    });
+  }
+
+  traverseWithGen<B>(f: (a: A) => Gen<B>): Gen<Tree<B>> {
+    return f(this.outcome).chain(b => {
+      return Gen.traverseForest(f, this.shrinks).map(shrinks => {
+        return new Tree({
+          outcome: b,
+          shrinks: shrinks
+        });
+      });
     });
   }
 }

@@ -25,7 +25,7 @@ export class Arbitrary<A> {
   chain<B>(f: (a: A) => Arbitrary<B>): Arbitrary<B> {
     return new Arbitrary({
       generator: this._.generator
-        .chain(tree => Gen.traverseTree(a => f(a)._.generator, tree))
+        .chain(tree => tree.traverseWithGen(a => f(a)._.generator))
         .map(Tree.flatten)
     });
   }
