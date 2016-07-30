@@ -52,6 +52,13 @@ export class Tree<A> implements ITree<A> {
     });
   }
 
+  withoutShrinks(): Tree<A> {
+    return new Tree({
+      outcome: this.outcome,
+      shrinks: List.empty<Tree<A>>()
+    });
+  }
+
   static flatten<A>(tt: Tree<Tree<A>>): Tree<A> {
     return tt.flatMap(t => t);
   }

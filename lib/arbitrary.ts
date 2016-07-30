@@ -30,6 +30,37 @@ export class Arbitrary<A> {
     });
   }
 
+  /**
+   * Creates an Arbitrary that relies on a size. Size allows for the "shrinking"
+   * of Arbitraries. Larger "size" should result in a larger generated value.
+   */
+  static sized<A>(f: (size: number) => Arbitrary<A>): Arbitrary<A> {
+    return new Arbitrary({
+      generator: Gen.sized(size => f(size)._.generator)
+    });
+  }
+
+  /**
+   * Given an explicit size, and an Arbitrary that relies on size, returns a new
+   * Arbitrary which always uses the provided size and is not shrinkable.
+   */
+  withFixedSize(size: number): Arbitrary<A> {
+    return new Arbitrary({
+      generator: this._.generator.resize(size)
+    });
+  }
+
+  /**
+   * Given a shrinkable Arbitrary, return a new Arbitrary which will never
+   * shrink. This can be useful when shrinking is taking a long time or is not
+   * applicable to the domain.
+   */
+  whichNeverShrinks(): Arbitrary<A> {
+    return new Arbitrary({
+      generator: this._.generator.map(t => t.withoutShrinks())
+    });
+  }
+
   static fromGenWithShrink<A>(gen: Gen<A>, shrink: (a: A) => List<A>): Arbitrary<A> {
     return new Arbitrary({
       generator: gen.map(a => Tree.unfoldTree(x => x, shrink, a))
@@ -46,7 +77,7 @@ export class Arbitrary<A> {
    * Create an arbitrary integer which is chosen uniformly distributed
    * from the closed interval `[a, b]`.
    */
-  static chooseInt(min: number, max: number): Arbitrary<number> {
+  static intWithin(min: number, max: number): Arbitrary<number> {
     return Arbitrary.fromGenWithShrink(Gen.chooseInt(min, max), shrink.shrinkTowards(min));
   }
 
@@ -73,7 +104,7 @@ export class Arbitrary<A> {
    * a non-empty collection of arbitraries with uniform probability.
    */
   static oneOf<A>(choice: Arbitrary<A>, choices: Array<Arbitrary<A>>): Arbitrary<A> {
-    return Arbitrary.chooseInt(0, choices.length).chain(idx => {
+    return Arbitrary.intWithin(0, choices.length).chain(idx => {
       if (idx < 1) {
         return choice;
       } else {
@@ -87,7 +118,7 @@ export class Arbitrary<A> {
    * uniform probability.
    */
   static elements<A>(choice: A, choices: Array<A>): Arbitrary<A> {
-    return Arbitrary.chooseInt(0, choices.length).map(idx => {
+    return Arbitrary.intWithin(0, choices.length).map(idx => {
       if (idx < 1) {
         return choice;
       } else {
