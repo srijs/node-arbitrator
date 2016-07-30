@@ -73,6 +73,12 @@ export class Arbitrary<A> {
     });
   }
 
+  reshrink(f: (a: A) => List<A>): Arbitrary<A> {
+    return new Arbitrary({
+      generator: this._.generator.map(t => t.expandTree(f))
+    });
+  }
+
   /**
    * Create an arbitrary integer which is chosen uniformly distributed
    * from the closed interval `[a, b]`.
